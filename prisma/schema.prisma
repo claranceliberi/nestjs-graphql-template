@@ -1,0 +1,255 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = []
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+model announcement {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdId   Int?
+  updatedId   Int?
+  title       String   @db.VarChar(500)
+  description String   @db.VarChar(1000)
+  isActive    Boolean  @default(true)
+}
+
+model Currency {
+  id             String         @id @default(cuid())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  createdId      String?
+  updatedId      String?
+  sign           String?        @db.VarChar(255)
+  name           String?        @db.VarChar(255)
+  code           String?        @db.VarChar(255)
+  isActive       Boolean        @default(true)
+  transactions   Transaction[]
+  userCurrencies UserCurrency[]
+}
+
+model List {
+  id           String        @id @default(cuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  createdId    String?
+  updatedId    String?
+  title        String        @db.VarChar(200)
+  description  String?       @db.VarChar(500)
+  color        String?       @db.VarChar(200)
+  emoji        String?       @db.VarChar(200)
+  isShared     Boolean?      @default(true)
+  isActive     Boolean?      @default(true)
+  userId       String?
+  teamId       String?
+  transactions Transaction[]
+
+  user User? @relation(fields: [userId], references: [id])
+  team Team? @relation(fields: [teamId], references: [id])
+}
+
+model Log {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdId     String?
+  updatedId     String?
+  type          String   @db.VarChar(200)
+  request_type  String   @db.VarChar(200)
+  operation     String   @db.VarChar(500)
+  ip            String?  @db.VarChar(500)
+  parameterNum1 Decimal? @default(0) @db.Decimal
+  parameterNum2 Decimal? @default(0) @db.Decimal
+  parameterNum3 Decimal? @default(0) @db.Decimal
+  parameterStr1 String?  @db.VarChar(1000)
+  parameterStr2 String?  @db.VarChar(1000)
+  parameterStr3 String?  @db.VarChar(1000)
+  response      String?  @db.VarChar(1000)
+  isSuccess     Boolean  @default(true)
+  teamId        Int?
+  teamName      String?  @db.VarChar(200)
+}
+
+model Menu {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdId       String?
+  updatedId       String?
+  name            String?  @unique @db.VarChar(500)
+  path            String?  @db.VarChar(500)
+  isParamId       Boolean  @default(true)
+  isParamUsername Boolean  @default(true)
+  isParamTeamName Boolean  @default(true)
+  isQueryEmail    Boolean  @default(true)
+  isQueryMemberId Boolean  @default(true)
+  isQueryListId   Boolean  @default(true)
+  isActive        Boolean  @default(true)
+  menuType        Boolean  @default(true)
+  nameEn          String?  @db.VarChar(500)
+}
+
+model Plan {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  createdId    String?
+  updatedId    String?
+  name         String?   @unique @db.VarChar(500)
+  monthlyPrice Decimal?  @default(0)
+  yearlyPrice  Decimal?  @default(0)
+  description  String?   @db.VarChar
+  proUser      ProUser[]
+}
+
+model ProUser {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  createdId    String?
+  updatedId    String?
+  billingCycle String    @db.VarChar(200)
+  expireDate   DateTime? @db.Timestamp(6)
+  userId       String?
+  planId       String?
+
+  plan Plan? @relation(fields: [planId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+  @@unique([userId, planId])
+}
+
+model Role {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  createdId   String?
+  updatedId   String?
+  name        String?    @unique @db.VarChar(500)
+  description String?    @db.VarChar(500)
+  teamRole    TeamRole[]
+  User        User?      @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model Team {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdId   String?
+  updatedId   String?
+  name        String       @unique @db.VarChar(20)
+  lists       List[]
+  teamMembers TeamMember[]
+}
+
+model TeamMember {
+  id                 String     @id @default(cuid())
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  createdId          String?
+  updatedId          String?
+  email              String?    @db.VarChar(500)
+  mailSecretCode     String?    @db.VarChar(500)
+  mailSecretCodeTime DateTime?  @db.Timestamp(6)
+  isAccepted         Boolean    @default(true)
+  teamId             String?
+  userId             String?
+  teamRoles          TeamRole[]
+
+  user User? @relation(fields: [userId], references: [id])
+  team Team? @relation(fields: [teamId], references: [id])
+  @@unique([teamId, userId])
+}
+
+model TeamRole {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  createdId    String?
+  updatedId    String?
+  roleId       String?
+  teamMemberId String?
+
+  teamMember TeamMember? @relation(fields: [teamMemberId], references: [id])
+  role       Role?       @relation(fields: [roleId], references: [id])
+  @@unique([roleId, teamMemberId], name: "UQ_b362c4b0b98e02282e55b1f4696")
+}
+
+model Transaction {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  createdId  String?
+  updatedId  String?
+  title      String   @db.VarChar(255)
+  note       String?  @db.VarChar(255)
+  type       Int      @default(0)
+  amount     Decimal  @default(0) @db.Decimal
+  tax        Decimal  @default(0) @db.Decimal
+  total      Decimal  @default(0) @db.Decimal
+  isLocked   Boolean  @default(true)
+  currencyId String?
+  listId     String?
+
+  list            List?            @relation(fields: [listId], references: [id])
+  currency        Currency?        @relation(fields: [currencyId], references: [id])
+  transactionLogs TransactionLog[]
+}
+
+model TransactionLog {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  createdId     String?
+  updatedId     String?
+  amount        Decimal      @default(0) @db.Decimal
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+}
+
+model User {
+  id             String         @id @default(cuid())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  createdId      String?
+  updatedId      String?
+  uuid           String?        @default(uuid())
+  username       String         @unique @db.VarChar(20)
+  email          String         @unique @db.VarChar(64)
+  password       String         @db.VarChar(500)
+  salt           String         @db.VarChar(500)
+  firstname      String         @db.VarChar(200)
+  lastname       String         @db.VarChar(200)
+  isApproved     Boolean        @default(false)
+  lists          List[]
+  role           Role[]
+  proUsers       ProUser[]
+  teamMembers    TeamMember[]
+  userCurrencies UserCurrency[]
+
+  @@unique([username, email, uuid])
+}
+
+model UserCurrency {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  createdId  String?
+  updatedId  String?
+  currencyId String?
+  userId     String?
+
+  user     User?     @relation(fields: [userId], references: [id])
+  currency Currency? @relation(fields: [currencyId], references: [id])
+
+  @@unique([currencyId, userId])
+}

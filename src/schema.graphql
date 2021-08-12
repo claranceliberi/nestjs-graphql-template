@@ -1,0 +1,175 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Auth {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT refresh token"""
+  refreshToken: String!
+  user: User!
+}
+
+input ChangePasswordInput {
+  newPassword: String!
+  oldPassword: String!
+}
+
+input CreateListInput {
+  color: String
+  createdId: String
+  emoji: String
+  isActive: Boolean
+  isShared: Boolean
+  title: String!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type GqlAuthResponseStatus {
+  status: String!
+}
+
+type List {
+  color: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  emoji: String
+  id: ID!
+  isActive: Boolean
+  isShared: Boolean
+  title: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+  user: User!
+  userId: User!
+}
+
+type ListConnection {
+  edges: [ListEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ListEdge {
+  cursor: String!
+  node: List!
+}
+
+input ListOrder {
+  direction: OrderDirection!
+  field: ListOrderField!
+}
+
+"""Properties by which list connections can be ordered."""
+enum ListOrderField {
+  createdAt
+  id
+  published
+  title
+  updatedAt
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  accountVerify(token: String!): Boolean!
+  changeForgotPassword(email: String!): ResponseBoolean!
+  changePassword(data: ChangePasswordInput!): User!
+  changePasswordwithEmail(password: String!, token: String!): Token!
+  createList(data: CreateListInput!): List!
+  login(data: LoginInput!): Auth!
+  refreshToken(token: String!): Token!
+  signOut: GqlAuthResponseStatus!
+  signup(data: SignupInput!): Auth!
+  updateUser(data: UpdateUserInput!): User!
+}
+
+"""
+Possible directions in which to order a list of items when provided an `orderBy` argument.
+"""
+enum OrderDirection {
+  asc
+  desc
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type Query {
+  hello(name: String!): String!
+  helloWorld: String!
+  list(listId: String!): List!
+  me: User!
+  publishedLists(after: String, before: String, first: Int, last: Int, orderBy: ListOrder, query: String, skip: Int): ListConnection!
+  userLists(userId: String!): [List!]!
+}
+
+type ResponseBoolean {
+  status: Boolean!
+}
+
+"""User role"""
+enum Role {
+  ADMIN
+  USER
+}
+
+input SignupInput {
+  """user email"""
+  email: String!
+
+  """user firstname"""
+  firstname: String!
+
+  """user lastname"""
+  lastname: String!
+
+  """user passwrord"""
+  password: String!
+
+  """user username"""
+  username: String!
+}
+
+type Subscription {
+  listCreated: List!
+}
+
+type Token {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT refresh token"""
+  refreshToken: String!
+}
+
+input UpdateUserInput {
+  firstname: String
+  lastname: String
+}
+
+type User {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  email: String!
+  firstname: String
+  id: ID!
+  lastname: String
+  lists: [List!]!
+  role: Role!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
+}

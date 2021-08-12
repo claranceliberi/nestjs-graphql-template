@@ -1,0 +1,280 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table announcement {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId Int
+  updatedId Int
+  title String [not null]
+  description String [not null]
+  isActive Boolean [not null, default: true]
+}
+
+Table Currency {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  sign String
+  name String
+  code String
+  isActive Boolean [not null, default: true]
+  transactions Transaction [not null]
+  userCurrencies UserCurrency [not null]
+}
+
+Table List {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  title String [not null]
+  description String
+  color String
+  emoji String
+  isShared Boolean [default: true]
+  isActive Boolean [default: true]
+  userId String
+  teamId String
+  transactions Transaction [not null]
+  user User
+  team Team
+}
+
+Table Log {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  type String [not null]
+  request_type String [not null]
+  operation String [not null]
+  ip String
+  parameterNum1 Decimal [default: 0]
+  parameterNum2 Decimal [default: 0]
+  parameterNum3 Decimal [default: 0]
+  parameterStr1 String
+  parameterStr2 String
+  parameterStr3 String
+  response String
+  isSuccess Boolean [not null, default: true]
+  teamId Int
+  teamName String
+}
+
+Table Menu {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  name String [unique]
+  path String
+  isParamId Boolean [not null, default: true]
+  isParamUsername Boolean [not null, default: true]
+  isParamTeamName Boolean [not null, default: true]
+  isQueryEmail Boolean [not null, default: true]
+  isQueryMemberId Boolean [not null, default: true]
+  isQueryListId Boolean [not null, default: true]
+  isActive Boolean [not null, default: true]
+  menuType Boolean [not null, default: true]
+  nameEn String
+}
+
+Table Plan {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  name String [unique]
+  monthlyPrice Decimal [default: 0]
+  yearlyPrice Decimal [default: 0]
+  description String
+  proUser ProUser [not null]
+}
+
+Table ProUser {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  billingCycle String [not null]
+  expireDate DateTime
+  userId String
+  planId String
+  plan Plan
+  user User
+
+  indexes {
+    (userId, planId) [unique]
+  }
+}
+
+Table Role {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  name String [unique]
+  description String
+  teamRole TeamRole [not null]
+  User User
+  userId String
+}
+
+Table Team {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  name String [unique, not null]
+  lists List [not null]
+  teamMembers TeamMember [not null]
+}
+
+Table TeamMember {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  email String
+  mailSecretCode String
+  mailSecretCodeTime DateTime
+  isAccepted Boolean [not null, default: true]
+  teamId String
+  userId String
+  teamRoles TeamRole [not null]
+  user User
+  team Team
+
+  indexes {
+    (teamId, userId) [unique]
+  }
+}
+
+Table TeamRole {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  roleId String
+  teamMemberId String
+  teamMember TeamMember
+  role Role
+
+  indexes {
+    (roleId, teamMemberId) [unique]
+  }
+}
+
+Table Transaction {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  title String [not null]
+  note String
+  type Int [not null, default: 0]
+  amount Decimal [not null, default: 0]
+  tax Decimal [not null, default: 0]
+  total Decimal [not null, default: 0]
+  isLocked Boolean [not null, default: true]
+  currencyId String
+  listId String
+  list List
+  currency Currency
+  transactionLogs TransactionLog [not null]
+}
+
+Table TransactionLog {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  amount Decimal [not null, default: 0]
+  transactionId String
+  transaction Transaction
+}
+
+Table User {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  uuid String
+  username String [unique, not null]
+  email String [unique, not null]
+  password String [not null]
+  salt String [not null]
+  firstname String [not null]
+  lastname String [not null]
+  isApproved Boolean [not null, default: false]
+  lists List [not null]
+  role Role [not null]
+  proUsers ProUser [not null]
+  teamMembers TeamMember [not null]
+  userCurrencies UserCurrency [not null]
+
+  indexes {
+    (username, email, uuid) [unique]
+  }
+}
+
+Table UserCurrency {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  createdId String
+  updatedId String
+  currencyId String
+  userId String
+  user User
+  currency Currency
+
+  indexes {
+    (currencyId, userId) [unique]
+  }
+}
+
+Ref: List.userId > User.id
+
+Ref: List.teamId > Team.id
+
+Ref: ProUser.planId > Plan.id
+
+Ref: ProUser.userId > User.id
+
+Ref: Role.userId > User.id
+
+Ref: TeamMember.userId > User.id
+
+Ref: TeamMember.teamId > Team.id
+
+Ref: TeamRole.teamMemberId > TeamMember.id
+
+Ref: TeamRole.roleId > Role.id
+
+Ref: Transaction.listId > List.id
+
+Ref: Transaction.currencyId > Currency.id
+
+Ref: TransactionLog.transactionId > Transaction.id
+
+Ref: UserCurrency.userId > User.id
+
+Ref: UserCurrency.currencyId > Currency.id
