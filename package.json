@@ -64,7 +64,7 @@
     "@nestjs/swagger": "5.0.9",
     "@prisma/client": "2.29.0",
     "apollo-server-express": "2.25.1",
-    "aws-sdk": "^2.965.0",
+    "aws-sdk": "2.1223.0",
     "bcrypt": "5.0.1",
     "cache-manager": "^3.4.4",
     "cache-manager-redis-store": "^2.0.0",
