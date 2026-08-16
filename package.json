@@ -51,7 +51,7 @@
     "allupdate": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
-    "@apollo/gateway": "^0.38.0",
+    "@apollo/gateway": "^0.54.0",
     "@devoxa/prisma-relay-cursor-connection": "2.0.2",
     "@nestjs/common": "8.0.6",
     "@nestjs/config": "1.0.1",
@@ -63,7 +63,7 @@
     "@nestjs/platform-express": "8.0.5",
     "@nestjs/swagger": "5.0.9",
     "@prisma/client": "2.29.0",
-    "apollo-server-express": "2.25.1",
+    "apollo-server-express": "2.26.2",
     "aws-sdk": "^2.965.0",
     "bcrypt": "5.0.1",
     "cache-manager": "^3.4.4",
